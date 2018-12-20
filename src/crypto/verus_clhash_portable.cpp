@@ -23,8 +23,10 @@
 #include <assert.h>
 #include <string.h>
 #include <x86intrin.h>
-
-#ifdef __WIN32
+#ifdef __APPLE__
+#include <sys/types.h>
+#endif
+#ifdef _WIN32
 #pragma warning (disable : 4146)
 #endif
 

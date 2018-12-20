@@ -21,6 +21,9 @@
 #define INCLUDE_VERUS_CLHASH_H
 
 #include <cpuid.h>
+#ifdef _WIN32
+#undef __cpuid
+#endif
 #include <boost/thread.hpp>
 
 #include <stdlib.h>
@@ -32,9 +35,9 @@
 extern "C" {
 #endif
 
-#ifdef __WIN32
+#ifdef _WIN32
 #define posix_memalign(p, a, s) (((*(p)) = _aligned_malloc((s), (a))), *(p) ?0 :errno)
-typedef unsigned char u_char
+typedef unsigned char u_char;
 #endif
 
 enum {
@@ -51,8 +54,29 @@ struct verusclhash_descr
     uint32_t keySizeInBytes;
 };
 
-extern boost::thread_specific_ptr<unsigned char> verusclhasher_key;
-extern boost::thread_specific_ptr<verusclhash_descr> verusclhasher_descr;
+struct thread_specific_ptr {
+    void *ptr;
+    thread_specific_ptr() { ptr = NULL; }
+    void reset(void *newptr = NULL)
+    {
+        if (ptr && ptr != newptr)
+        {
+            std::free(ptr);
+        }
+        ptr = newptr;
+    }
+    void *get() { return ptr; }
+#ifdef _WIN32 // horrible MingW and gcc thread local storage bug workaround
+    ~thread_specific_ptr();
+#else
+    ~thread_specific_ptr() {
+        this->reset();
+    }
+#endif
+};
+
+extern thread_local thread_specific_ptr verusclhasher_key;
+extern thread_local thread_specific_ptr verusclhasher_descr;
 
 static int __cpuverusoptimized = 0x80;
 
@@ -117,7 +141,7 @@ struct verusclhasher {
         }
 
         // align to 128 bits
-        if (verusclhasher_key.get() && keySizeInBytes != verusclhasher_descr.get()->keySizeInBytes)
+        if (verusclhasher_key.get() && keySizeInBytes != ((verusclhash_descr *)(verusclhasher_descr.get()))->keySizeInBytes)
         {
             verusclhasher_key.reset();
             verusclhasher_descr.reset();
@@ -128,7 +152,7 @@ struct verusclhasher {
             (verusclhasher_key.reset((unsigned char *)alloc_aligned_buffer(keySizeInBytes << 1)), key = verusclhasher_key.get()))
         {
             verusclhash_descr *pdesc;
-            if (verusclhasher_descr.reset(new verusclhash_descr()), pdesc = verusclhasher_descr.get())
+            if (verusclhasher_descr.reset(std::malloc(sizeof(verusclhash_descr))), pdesc = (verusclhash_descr *)verusclhasher_descr.get())
             {
                 pdesc->keySizeInBytes = keySizeInBytes;
             }
@@ -156,8 +180,8 @@ struct verusclhasher {
     // WARNING!! this does not check for NULL ptr, so make sure the buffer is allocated
     inline void *gethashkey()
     {
-        unsigned char *ret = verusclhasher_key.get();
-        verusclhash_descr *pdesc = verusclhasher_descr.get();
+        unsigned char *ret = (unsigned char *)verusclhasher_key.get();
+        verusclhash_descr *pdesc = (verusclhash_descr *)verusclhasher_descr.get();
         memcpy(ret, ret + pdesc->keySizeInBytes, keyMask + 1);
 #ifdef VERUSHASHDEBUG
         // in debug mode, ensure that what should be the same, is
@@ -168,13 +192,12 @@ struct verusclhasher {
 
     inline void *gethasherrefresh()
     {
-        verusclhash_descr *pdesc = verusclhasher_descr.get();
-        return verusclhasher_key.get() + verusclhasher_descr.get()->keySizeInBytes;
+        return ((unsigned char *)verusclhasher_key.get()) + ((verusclhash_descr *)(verusclhasher_descr.get()))->keySizeInBytes;
     }
 
     inline verusclhash_descr *gethasherdescription()
     {
-        return verusclhasher_descr.get();
+        return ((verusclhash_descr *)(verusclhasher_descr.get()));
     }
 
     inline uint64_t keyrefreshsize()

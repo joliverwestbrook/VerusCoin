@@ -93,6 +93,7 @@ build:windows:
       zcutil/wget64.exe
       zcutil/upgrade-agama.bat
       verus-cli
+  - if [ "${CI_COMMIT_REF_NAME}" = "master" ]; then strip -g verus-cli/komodod.exe && strip -g verus-cli/komodod.exe && strip -g verus-cli/komodo-tx.exe; fi
   - zip -r ${VERUS_CLI_WINDOWS} verus-cli
   - sha256sum ${VERUS_CLI_WINDOWS} > ${VERUS_CLI_WINDOWS}.sha256
   - curl -F file=@"${VERUS_CLI_WINDOWS}"

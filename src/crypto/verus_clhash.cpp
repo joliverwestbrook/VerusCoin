@@ -19,14 +19,33 @@
 
 
 #include "verus_hash.h"
+#ifdef _WIN32
+#undef __cpuid
+#define posix_memalign(p, a, s) (((*(p)) = _aligned_malloc((s), (a))), *(p) ?0 :errno)
+#endif
 #include <boost/thread.hpp>
 
 #include <assert.h>
 #include <string.h>
 #include <x86intrin.h>
 
-boost::thread_specific_ptr<unsigned char> verusclhasher_key;
-boost::thread_specific_ptr<verusclhash_descr> verusclhasher_descr;
+thread_local thread_specific_ptr verusclhasher_key;
+thread_local thread_specific_ptr verusclhasher_descr;
+
+#ifdef _WIN32
+thread_specific_ptr::~thread_specific_ptr() {
+    if (verusclhasher_key.ptr)
+    {
+        verusclhasher_key.reset();
+        verusclhasher_key.ptr = NULL;
+    }
+    if (verusclhasher_descr.ptr)
+    {
+        verusclhasher_descr.reset();
+        verusclhasher_descr.ptr = NULL;
+    }
+}
+#endif
 
 // multiply the length and the some key, no modulo
 static inline __m128i lazyLengthHash(uint64_t keylength, uint64_t length) {

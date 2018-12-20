@@ -101,6 +101,7 @@ class CVerusHashV2
             result = buf2;
             curPos = 0;
             std::fill(buf1, buf1 + sizeof(buf1), 0);
+            return *this;
         }
 
         inline int64_t *ExtraI64Ptr() { return (int64_t *)(curBuf + 32); }
@@ -143,8 +144,8 @@ class CVerusHashV2
         // chains Haraka256 from 32 bytes to fill the key
         u128 *GenNewCLKey(unsigned char *seedBytes32)
         {
-            unsigned char *key = verusclhasher_key.get();
-            verusclhash_descr *pdesc = verusclhasher_descr.get();
+            unsigned char *key = (unsigned char *)verusclhasher_key.get();
+            verusclhash_descr *pdesc = (verusclhash_descr *)verusclhasher_descr.get();
             // skip keygen if it is the current key
             if (pdesc->seed != *((uint256 *)seedBytes32))
             {
