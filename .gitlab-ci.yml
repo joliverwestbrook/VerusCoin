@@ -35,36 +35,37 @@ build:linux:
     paths:
     - depends/built
   script:
-  - zcutil/build.sh -j$(nproc)
-  - mkdir verus-cli
-  - cp src/komodod
-      src/komodo-cli
-      src/fiat/verus
-      src/verusd
-      doc/man/verus-cli/linux/README.txt
-      zcutil/fetch-params.sh
-      zcutil/upgrade-agama.sh
-      verus-cli
-  - mv verus-cli/fetch-params.sh verus-cli/fetch-params
-  - chmod +x verus-cli/komodod
-  - chmod +x verus-cli/komodo-cli
-  - chmod +x verus-cli/verus
-  - chmod +x verus-cli/verusd
-  - chmod +x verus-cli/fetch-params
-  - chmod +x verus-cli/upgrade-agama.sh
-  - if [ "${CI_COMMIT_REF_NAME}" = "master" ]; then strip -g verus-cli/komodod && strip -g verus-cli/komodod; fi
-  - tar -czvf ${VERUS_CLI_LINUX} verus-cli
-  - sha256sum ${VERUS_CLI_LINUX} > ${VERUS_CLI_LINUX}.sha256
+    -scl enable devtoolset-7 bash
+    - zcutil/build.sh -j$(nproc)
+    - mkdir verus-cli
+    - cp src/komodod
+        src/komodo-cli
+        src/fiat/verus
+        src/verusd
+        doc/man/verus-cli/linux/README.txt
+        zcutil/fetch-params.sh
+        zcutil/upgrade-agama.sh
+        verus-cli
+    - mv verus-cli/fetch-params.sh verus-cli/fetch-params
+    - chmod +x verus-cli/komodod
+    - chmod +x verus-cli/komodo-cli
+    - chmod +x verus-cli/verus
+    - chmod +x verus-cli/verusd
+    - chmod +x verus-cli/fetch-params
+    - chmod +x verus-cli/upgrade-agama.sh
+    - if [ "${CI_COMMIT_REF_NAME}" = "master" ]; then strip -g verus-cli/komodod && strip -g verus-cli/komodod; fi
+    - tar -czvf ${VERUS_CLI_LINUX} verus-cli
+    - sha256sum ${VERUS_CLI_LINUX} > ${VERUS_CLI_LINUX}.sha256
   after_script:
-  - curl -F file=@"${VERUS_CLI_LINUX}"
-      -F channels="${CLI_POST_CHANNEL}"
-      -F initial_comment="${POST_MESSAGE}"
-      -H "${SLACK_BOT_AUTH}"
-      "https://slack.com/api/files.upload"
+    - curl -F file=@"${VERUS_CLI_LINUX}"
+        -F channels="${CLI_POST_CHANNEL}"
+        -F initial_comment="${POST_MESSAGE}"
+        -H "${SLACK_BOT_AUTH}"
+        "https://slack.com/api/files.upload"
   artifacts:
     paths:
-    - ${VERUS_CLI_LINUX}
-    - ${VERUS_CLI_LINUX}.sha256
+      - ${VERUS_CLI_LINUX}
+      - ${VERUS_CLI_LINUX}.sha256
     expire_in: 1 week
 ########################################################################################################################
 ####END####                                              LINUX                                               ####END####
@@ -81,30 +82,30 @@ build:windows:
     paths:
     - depends/built
   script:
-  - zcutil/build-win.sh -j$(nproc)
-  - mkdir verus-cli
-  - cp src/komodod.exe
-      src/komodo-cli.exe
-      src/komodo-tx.exe
-      src/fiat/verus.bat
-      src/verusd.bat
-      doc/man/verus-cli/windows/README.txt
-      zcutil/fetch-params.bat
-      zcutil/wget64.exe
-      zcutil/upgrade-agama.bat
-      verus-cli
-  - if [ "${CI_COMMIT_REF_NAME}" = "master" ]; then strip -g verus-cli/komodod.exe && strip -g verus-cli/komodod.exe && strip -g verus-cli/komodo-tx.exe; fi
-  - zip -r ${VERUS_CLI_WINDOWS} verus-cli
-  - sha256sum ${VERUS_CLI_WINDOWS} > ${VERUS_CLI_WINDOWS}.sha256
-  - curl -F file=@"${VERUS_CLI_WINDOWS}"
-      -F channels="${CLI_POST_CHANNEL}"
-      -F initial_comment="${POST_MESSAGE}"
-      -H "${SLACK_BOT_AUTH}"
-      "https://slack.com/api/files.upload"
+    - zcutil/build-win.sh -j$(nproc)
+    - mkdir verus-cli
+    - cp src/komodod.exe
+        src/komodo-cli.exe
+        src/komodo-tx.exe
+        src/fiat/verus.bat
+        src/verusd.bat
+        doc/man/verus-cli/windows/README.txt
+        zcutil/fetch-params.bat
+        zcutil/wget64.exe
+        zcutil/upgrade-agama.bat
+        verus-cli
+    - if [ "${CI_COMMIT_REF_NAME}" = "master" ]; then strip -g verus-cli/komodod.exe && strip -g verus-cli/komodod.exe && strip -g verus-cli/komodo-tx.exe; fi
+    - zip -r ${VERUS_CLI_WINDOWS} verus-cli
+    - sha256sum ${VERUS_CLI_WINDOWS} > ${VERUS_CLI_WINDOWS}.sha256
+    - curl -F file=@"${VERUS_CLI_WINDOWS}"
+        -F channels="${CLI_POST_CHANNEL}"
+        -F initial_comment="${POST_MESSAGE}"
+        -H "${SLACK_BOT_AUTH}"
+        "https://slack.com/api/files.upload"
   artifacts:
     paths:
-    - ${VERUS_CLI_WINDOWS}
-    - ${VERUS_CLI_WINDOWS}.sha256
+      - ${VERUS_CLI_WINDOWS}
+      - ${VERUS_CLI_WINDOWS}.sha256
     expire_in: 1 week
 ########################################################################################################################
 ####END####                                             WINDOWS                                              ####END####
@@ -119,19 +120,19 @@ build:mac:
     paths:
     - depends/built
   script:
-  - zcutil/build-mac.sh -j$(sysctl -n hw.physicalcpu)
-  - ./makeReleaseMac.sh
-  - tar -czvf ${VERUS_CLI_MACOS} verus-cli
-  - shasum -a 256 ${VERUS_CLI_MACOS} > ${VERUS_CLI_MACOS}.sha256
-  - curl -F file=@"${VERUS_CLI_MACOS}"
-      -F channels="${CLI_POST_CHANNEL}"
-      -F initial_comment="${POST_MESSAGE}"
-      -H "${SLACK_BOT_AUTH}"
-      "https://slack.com/api/files.upload"
+    - zcutil/build-mac.sh -j$(sysctl -n hw.physicalcpu)
+    - ./makeReleaseMac.sh
+    - tar -czvf ${VERUS_CLI_MACOS} verus-cli
+    - shasum -a 256 ${VERUS_CLI_MACOS} > ${VERUS_CLI_MACOS}.sha256
+    - curl -F file=@"${VERUS_CLI_MACOS}"
+        -F channels="${CLI_POST_CHANNEL}"
+        -F initial_comment="${POST_MESSAGE}"
+        -H "${SLACK_BOT_AUTH}"
+        "https://slack.com/api/files.upload"
   artifacts:
     paths:
-    - ${VERUS_CLI_MACOS}
-    - ${VERUS_CLI_MACOS}.sha256
+      - ${VERUS_CLI_MACOS}
+      - ${VERUS_CLI_MACOS}.sha256
     expire_in: 1 week
 ########################################################################################################################
 ####END####                                              MACOS                                               ####END####
@@ -154,14 +155,14 @@ code_quality:
     DOCKER_DRIVER: overlay2
   allow_failure: true
   services:
-  - docker:stable-dind
+    - docker:stable-dind
   script:
-  - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-  - docker run
-      --env SOURCE_CODE="$PWD"
-      --volume "$PWD":/code
-      --volume /var/run/docker.sock:/var/run/docker.sock
-      "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+        --env SOURCE_CODE="$PWD"
+        --volume "$PWD":/code
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
   artifacts:
     paths: [gl-code-quality-report.json]
 ########################################################################################################################
@@ -178,12 +179,12 @@ sast:
   services:
   - docker:stable-dind
   script:
-  - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-  - docker run
-      --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}"
-      --volume "$PWD:/code"
-      --volume /var/run/docker.sock:/var/run/docker.sock
-      "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION" /app/bin/run /code
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+        --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}"
+        --volume "$PWD:/code"
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION" /app/bin/run /code
   artifacts:
     paths: [gl-sast-report.json]
 ########################################################################################################################
@@ -198,15 +199,15 @@ ubuntu:xenial:
     DOCKER_DRIVER: overlay2
   stage: test
   before_script:
-  - apt update && apt install -y wget libgomp1 libcurl4-gnutls-dev python
-  - rm -rf /root/.komodo || true
-  - mv .komodo /root/ || true
+    - apt update && apt install -y wget libgomp1 libcurl4-gnutls-dev python
+    - rm -rf /root/.komodo || true
+    - mv .komodo /root/ || true
   script:
-  - tar -xzvf ${VERUS_CLI_LINUX}
-  - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
-  - python qa/verus-cli-tests/verus-cli-tester.py
+    - tar -xzvf ${VERUS_CLI_LINUX}
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
   after_script:
-  - mv /root/.komodo ./ || true
+    - mv /root/.komodo ./ || true
   cache:
     key: ${CI_JOB_NAME}
     paths: [.komodo]
@@ -214,7 +215,7 @@ ubuntu:xenial:
     paths: [log.txt]
     expire_in: 1 week
   dependencies:
-  - build:linux
+    - build:linux
 ########################################################################################################################
 ####END####                               Run Verus CLI on Ubuntu Xenial (16.04)                             ####END####
 ########################################################################################################################
@@ -227,15 +228,15 @@ ubuntu:bionic:
     DOCKER_DRIVER: overlay2
   stage: test
   before_script:
-  - apt update && apt install -y wget libgomp1 libcurl4-gnutls-dev python
-  - rm -rf /root/.komodo || true
-  - mv .komodo /root/ || true
+    - apt update && apt install -y wget libgomp1 libcurl4-gnutls-dev python
+    - rm -rf /root/.komodo || true
+    - mv .komodo /root/ || true
   script:
-  - tar -xzvf ${VERUS_CLI_LINUX}
-  - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
-  - python qa/verus-cli-tests/verus-cli-tester.py
+    - tar -xzvf ${VERUS_CLI_LINUX}
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
   after_script:
-  - mv /root/.komodo ./ || true
+    - mv /root/.komodo ./ || true
   cache:
     key: ${CI_JOB_NAME}
     paths: [.komodo]
@@ -243,7 +244,7 @@ ubuntu:bionic:
     paths: [log.txt]
     expire_in: 1 week
   dependencies:
-  - build:linux
+    - build:linux
 ########################################################################################################################
 ####END####                               Run Verus CLI on Ubuntu Bionic (18.04)                             ####END####
 ########################################################################################################################
@@ -254,14 +255,14 @@ ubuntu:bionic:
   stage: test
   tags: ["Sierra"]
   script:
-  - tar -xzvf $VERUS_CLI_MACOS
-  - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
-  - python qa/verus-cli-tests/verus-cli-tester.py
+    - tar -xzvf $VERUS_CLI_MACOS
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
   artifacts:
     paths: [log.txt]
     expire_in: 1 week
   dependencies:
-  - build:mac
+    - build:mac
 ########################################################################################################################
 ####END####                               Run Verus CLI on MacOS Sierra (10.12.6)                            ####END####
 ########################################################################################################################
@@ -272,14 +273,14 @@ ubuntu:bionic:
   stage: test
   tags: ["High Sierra"]
   script:
-  - tar -xzvf ${VERUS_CLI_MACOS}
-  - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
-  - python qa/verus-cli-tests/verus-cli-tester.py
+    - tar -xzvf ${VERUS_CLI_MACOS}
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
   artifacts:
     paths: [log.txt]
     expire_in: 1 week
   dependencies:
-  - build:mac
+    - build:mac
 ########################################################################################################################
 ####START####                          Run Verus CLI on MacOS High Sierra (10.12.6)                        ####START####
 ########################################################################################################################
@@ -290,14 +291,14 @@ ubuntu:bionic:
   stage: test
   tags: ["Windows 10"]
   script:
-  - PowerShell Expand-Archive -Path %VERUS_CLI_WINDOWS% -DestinationPath %CI_PROJECT_DIR%
-  - set PATH=%PATH%;%CI_PROJECT_DIR%\verus-cli
-  - qa\verus-cli-tests\verus-cli-tester.py
+    - PowerShell Expand-Archive -Path %VERUS_CLI_WINDOWS% -DestinationPath %CI_PROJECT_DIR%
+    - set PATH=%PATH%;%CI_PROJECT_DIR%\verus-cli
+    - qa\verus-cli-tests\verus-cli-tester.py
   artifacts:
     paths: [log.txt]
     expire_in: 1 week
   dependencies:
-  - build:windows
+    - build:windows
 ########################################################################################################################
 ####END####                                Run Verus CLI on Windows 10                                       ####END####
 ########################################################################################################################
@@ -313,27 +314,27 @@ deploy:
   variables:
     DOCKER_DRIVER: overlay2
   dependencies:
-  - build:linux
-  - build:windows
-  - build:mac
+    - build:linux
+    - build:windows
+    - build:mac
   script:
-  - mkdir Windows && mkdir Linux && mkdir MacOS &&
-    mv ${VERUS_CLI_WINDOWS} Windows &&
-    mv ${VERUS_CLI_LINUX} Linux &&
-    mv ${VERUS_CLI_MACOS} MacOS
-  - echo "$AUTH_KEY" > AUTH_KEY.json &&
-    gcloud auth activate-service-account
-    --key-file AUTH_KEY.json
-  - gsutil cp -r Windows Linux MacOS $STAGING/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}/
-  - curl -X POST
-      -F token="$CI_JOB_TOKEN"
-      -F ref="$DOWNSTREAM_AGAMA_BRANCH"
-      -F variables\[UPSTREAM_TRIGGER\]="${CI_PROJECT_NAME}"
-      -F variables\[UPSTREAM_CLI_BRANCH\]="${CI_COMMIT_REF_NAME}"
-      -F variables\[VERUS_CLI_LINUX\]="${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}/Linux/${VERUS_CLI_LINUX}"
-      -F variables\[VERUS_CLI_WINDOWS\]="${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}/Windows/${VERUS_CLI_WINDOWS}"
-      -F variables\[VERUS_CLI_MACOS\]="${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}/MacOS/${VERUS_CLI_MACOS}"
-      "https://gitlab.com/api/v4/projects/8018592/trigger/pipeline"
+    - mkdir Windows && mkdir Linux && mkdir MacOS &&
+      mv ${VERUS_CLI_WINDOWS} Windows &&
+      mv ${VERUS_CLI_LINUX} Linux &&
+      mv ${VERUS_CLI_MACOS} MacOS
+    - echo "$AUTH_KEY" > AUTH_KEY.json &&
+      gcloud auth activate-service-account
+      --key-file AUTH_KEY.json
+    - gsutil cp -r Windows Linux MacOS $STAGING/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}/
+    - curl -X POST
+        -F token="$CI_JOB_TOKEN"
+        -F ref="$DOWNSTREAM_AGAMA_BRANCH"
+        -F variables\[UPSTREAM_TRIGGER\]="${CI_PROJECT_NAME}"
+        -F variables\[UPSTREAM_CLI_BRANCH\]="${CI_COMMIT_REF_NAME}"
+        -F variables\[VERUS_CLI_LINUX\]="${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}/Linux/${VERUS_CLI_LINUX}"
+        -F variables\[VERUS_CLI_WINDOWS\]="${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}/Windows/${VERUS_CLI_WINDOWS}"
+        -F variables\[VERUS_CLI_MACOS\]="${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}/MacOS/${VERUS_CLI_MACOS}"
+        "https://gitlab.com/api/v4/projects/8018592/trigger/pipeline"
 ########################################################################################################################
 ####END####                                           Deploy                                                 ####END####
 ########################################################################################################################
