@@ -35,7 +35,7 @@ build:linux:
     paths:
     - depends/built
   script:
-    - scl enable devtoolset-7 bash
+    - scl enable devtoolset-7 sh
     - zcutil/build.sh -j$(nproc)
     - mkdir verus-cli
     - cp src/komodod
