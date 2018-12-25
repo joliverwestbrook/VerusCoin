@@ -35,7 +35,10 @@ build:linux:
     paths:
     - depends/built
   script:
-    - scl enable devtoolset-7 sh && gcc -v && zcutil/build.sh -j$(nproc)
+    - scl enable devtoolset-7 sh
+    - source /opt/rh/devtoolset-7/enable
+    - gcc -v
+    - zcutil/build.sh -j$(nproc)
     - mkdir verus-cli
     - cp src/komodod
         src/komodo-cli
