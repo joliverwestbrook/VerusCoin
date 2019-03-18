@@ -204,6 +204,7 @@ linux:ubuntu-cosmic:
         gcc-7
         g++-7
         libcurl4-openssl-dev
+    - update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
   script:
     - zcutil/build.sh -j$(nproc)
     - mkdir verus-cli
@@ -214,6 +215,60 @@ linux:ubuntu-cosmic:
         doc/man/verus-cli/linux/README.txt
         zcutil/fetch-params.sh
         verus-cli
+    - mv verus-cli/fetch-params.sh verus-cli/fetch-params
+    - chmod +x verus-cli/komodod
+    - chmod +x verus-cli/komodo-cli
+    - chmod +x verus-cli/verus
+    - chmod +x verus-cli/verusd
+    - chmod +x verus-cli/fetch-params
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  artifacts:
+    paths: [log.txt]
+    expire_in: 1 week
+
+linux:ubuntu-disco:
+  image: ubuntu:disco
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: build
+  before_script:
+    - apt-get update
+    - apt-get -y install
+      pkg-config
+      libc6-dev
+      m4
+      autoconf
+      curl
+      libtool
+      make
+      ncurses-dev
+      unzip
+      python
+      zlib1g-dev
+      wget
+      bsdmainutils
+      automake
+      libssl-dev
+      libprotobuf-dev
+      protobuf-compiler
+      libqrencode-dev
+      libdb++-dev
+      libgconf-2-4
+      gcc-7
+      g++-7
+      libcurl4-openssl-dev
+    - update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+  script:
+    - zcutil/build.sh -j$(nproc)
+    - mkdir verus-cli
+    - cp src/komodod
+      src/komodo-cli
+      src/fiat/verus
+      src/verusd
+      doc/man/verus-cli/linux/README.txt
+      zcutil/fetch-params.sh
+      verus-cli
     - mv verus-cli/fetch-params.sh verus-cli/fetch-params
     - chmod +x verus-cli/komodod
     - chmod +x verus-cli/komodo-cli
