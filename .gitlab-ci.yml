@@ -70,7 +70,7 @@ build:linux:centos7:
 
 
 linux:ubuntu-xenial:
-  image: ubuntu/xenial
+  image: ubuntu:xenial
   variables:
     DOCKER_DRIVER: overlay2
   stage: build
@@ -121,7 +121,7 @@ linux:ubuntu-xenial:
     expire_in: 1 week
 
 linux:ubuntu-bionic:
-  image: ubuntu/bionic
+  image: ubuntu:bionic
   variables:
     DOCKER_DRIVER: overlay2
   stage: build
@@ -174,7 +174,7 @@ linux:ubuntu-bionic:
 
 
 linux:ubuntu-cosmic:
-  image: ubuntu/cosmic
+  image: ubuntu:cosmic
   variables:
     DOCKER_DRIVER: overlay2
   stage: build
