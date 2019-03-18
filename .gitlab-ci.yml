@@ -6,7 +6,7 @@ stages:
 ####START####                                     PROJECT LEVEL VARIABLES                                  ####START####
 ########################################################################################################################
 variables:
-  VERSION: 0.5.6
+  VERSION: 0.5.7
   VERUS_CLI_LINUX: Verus-CLI-Linux-v${VERSION}.tar.gz
   VERUS_CLI_WINDOWS: Verus-CLI-Windows-v${VERSION}.zip
   VERUS_CLI_MACOS: Verus-CLI-MacOS-v${VERSION}.tar.gz
@@ -25,16 +25,19 @@ variables:
 ########################################################################################################################
 ####START####                                            LINUX                                             ####START####
 ########################################################################################################################
-build:linux:
-  image: asherd/verus-builders:verus-ubuntu
+build:linux:centos7:
+  image: asherd/verus-builders:verus-centos
   variables:
     DOCKER_DRIVER: overlay2
+    STATIC_LIBCURL: 1
   stage: build
   cache:
     key: "${CI_JOB_NAME}${CI_COMMIT_REF_NAME}"
     paths:
     - depends/built
   script:
+  - scl enable devtoolset-7 sh
+  - source /opt/rh/devtoolset-7/enable
   - zcutil/build.sh -j$(nproc)
   - mkdir verus-cli
   - cp src/komodod
@@ -63,6 +66,164 @@ build:linux:
     paths:
     - ${VERUS_CLI_LINUX}
     - ${VERUS_CLI_LINUX}.sha256
+    expire_in: 1 week
+
+
+linux:ubuntu-xenial:
+  image: ubuntu/xenial
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: build
+  before_script:
+    - apt-get update
+    - apt-get -y install
+        pkg-config
+        libc6-dev
+        m4
+        autoconf
+        curl
+        libtool
+        make
+        ncurses-dev
+        unzip
+        python
+        zlib1g-dev
+        wget
+        bsdmainutils
+        automake
+        libssl-dev
+        libprotobuf-dev
+        protobuf-compiler
+        libqrencode-dev
+        libdb++-dev
+        libgconf-2-4
+        libcurl4-openssl-dev
+  script:
+    - zcutil/build.sh -j$(nproc)
+    - mkdir verus-cli
+    - cp src/komodod
+        src/komodo-cli
+        src/fiat/verus
+        src/verusd
+        doc/man/verus-cli/linux/README.txt
+        zcutil/fetch-params.sh
+        verus-cli
+    - mv verus-cli/fetch-params.sh verus-cli/fetch-params
+    - chmod +x verus-cli/komodod
+    - chmod +x verus-cli/komodo-cli
+    - chmod +x verus-cli/verus
+    - chmod +x verus-cli/verusd
+    - chmod +x verus-cli/fetch-params
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  artifacts:
+    paths: [log.txt]
+    expire_in: 1 week
+
+linux:ubuntu-bionic:
+  image: ubuntu/bionic
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: build
+  before_script:
+    - apt-get update
+    - apt-get -y install
+        pkg-config
+        libc6-dev
+        m4
+        autoconf
+        curl
+        libtool
+        make
+        ncurses-dev
+        unzip
+        python
+        zlib1g-dev
+        wget
+        bsdmainutils
+        automake
+        libssl-dev
+        libprotobuf-dev
+        protobuf-compiler
+        libqrencode-dev
+        libdb++-dev
+        libgconf-2-4
+        libcurl4-openssl-dev
+
+  script:
+    - zcutil/build.sh -j$(nproc)
+    - mkdir verus-cli
+    - cp src/komodod
+      src/komodo-cli
+      src/fiat/verus
+      src/verusd
+      doc/man/verus-cli/linux/README.txt
+      zcutil/fetch-params.sh
+      verus-cli
+    - mv verus-cli/fetch-params.sh verus-cli/fetch-params
+    - chmod +x verus-cli/komodod
+    - chmod +x verus-cli/komodo-cli
+    - chmod +x verus-cli/verus
+    - chmod +x verus-cli/verusd
+    - chmod +x verus-cli/fetch-params
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  artifacts:
+    paths: [log.txt]
+    expire_in: 1 week
+
+
+linux:ubuntu-cosmic:
+  image: ubuntu/cosmic
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: build
+  before_script:
+    - apt-get update
+    - apt-get -y install
+        pkg-config
+        libc6-dev
+        m4
+        autoconf
+        curl
+        libtool
+        make
+        ncurses-dev
+        unzip
+        python
+        zlib1g-dev
+        wget
+        bsdmainutils
+        automake
+        libssl-dev
+        libprotobuf-dev
+        protobuf-compiler
+        libqrencode-dev
+        libdb++-dev
+        libgconf-2-4
+        gcc-7
+        g++-7
+        libcurl4-openssl-dev
+  script:
+    - zcutil/build.sh -j$(nproc)
+    - mkdir verus-cli
+    - cp src/komodod
+        src/komodo-cli
+        src/fiat/verus
+        src/verusd
+        doc/man/verus-cli/linux/README.txt
+        zcutil/fetch-params.sh
+        verus-cli
+    - mv verus-cli/fetch-params.sh verus-cli/fetch-params
+    - chmod +x verus-cli/komodod
+    - chmod +x verus-cli/komodo-cli
+    - chmod +x verus-cli/verus
+    - chmod +x verus-cli/verusd
+    - chmod +x verus-cli/fetch-params
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  artifacts:
+    paths: [log.txt]
     expire_in: 1 week
 ########################################################################################################################
 ####END####                                              LINUX                                               ####END####
@@ -189,7 +350,7 @@ build:mac:
 ########################################################################################################################
 ####START####                            Run Verus CLI on Ubuntu Xenial (16.04)                            ####START####
 ########################################################################################################################
-.ubuntu:xenial:
+ubuntu:xenial:
   image: ubuntu:xenial
   variables:
     DOCKER_DRIVER: overlay2
@@ -211,20 +372,20 @@ build:mac:
     paths: [log.txt]
     expire_in: 1 week
   dependencies:
-  - build:linux
+  - build:linux:centos7
 ########################################################################################################################
 ####END####                               Run Verus CLI on Ubuntu Xenial (16.04)                             ####END####
 ########################################################################################################################
 ########################################################################################################################
 ####START####                             Run Verus CLI on Ubuntu Bionic (18.04)                           ####START####
 ########################################################################################################################
-.ubuntu:bionic:
+ubuntu:bionic:
   image: ubuntu:bionic
   variables:
     DOCKER_DRIVER: overlay2
   stage: test
   before_script:
-  - apt update && apt install -y wget libgomp1 libcurl4-gnutls-dev python
+  - apt update && apt install -y wget libgomp1 python
   - rm -rf /root/.komodo || true
   - mv .komodo /root/ || true
   script:
@@ -240,7 +401,32 @@ build:mac:
     paths: [log.txt]
     expire_in: 1 week
   dependencies:
-  - build:linux
+    - build:linux:centos7
+
+ubuntu:cosmic:
+  image: ubuntu:cosmic
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: test
+  before_script:
+    - apt update && apt install -y wget libgomp1 python
+    - rm -rf /root/.komodo || true
+    - mv .komodo /root/ || true
+  script:
+    - tar -xzvf ${VERUS_CLI_LINUX}
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  after_script:
+    - mv /root/.komodo ./ || true
+  cache:
+    key: ${CI_JOB_NAME}
+    paths: [.komodo]
+  artifacts:
+    paths: [log.txt]
+    expire_in: 1 week
+  dependencies:
+    - build:linux:centos7
+
 ########################################################################################################################
 ####END####                               Run Verus CLI on Ubuntu Bionic (18.04)                             ####END####
 ########################################################################################################################
@@ -310,7 +496,7 @@ deploy:
   variables:
     DOCKER_DRIVER: overlay2
   dependencies:
-  - build:linux
+  - build:linux:centos7
   - build:windows
   - build:mac
   script:

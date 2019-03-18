@@ -45,10 +45,14 @@ rust_packages := rust $(rust_crates) librustzcash
 native_packages := native_ccache
 
 wallet_packages=bdb
+packages := boost openssl libevent zeromq $(zcash_packages) googletest #googlemock
 
-ifeq ($(host_os),linux)
-	packages := boost openssl libevent zeromq $(zcash_packages) googletest #googlemock
-else
-	packages := boost openssl libevent zeromq $(zcash_packages) libcurl googletest #googlemock
+ifneq ($(host_os),linux)
+	packages := $(packages) libcurl
 endif
+
+ifeq ($(STATIC_LIBCURL),1)
+    packages := $(packages) libcurl
+endif
+
 
