@@ -411,7 +411,7 @@ ubuntu:xenial:
     DOCKER_DRIVER: overlay2
   stage: test
   before_script:
-  - apt update && apt install -y wget libgomp1 libcurl4-gnutls-dev python
+  - apt update && apt install -y wget  python
   - rm -rf /root/.komodo || true
   - mv .komodo /root/ || true
   script:
@@ -440,7 +440,7 @@ ubuntu:bionic:
     DOCKER_DRIVER: overlay2
   stage: test
   before_script:
-  - apt update && apt install -y wget libgomp1 python
+  - apt update && apt install -y wget python
   - rm -rf /root/.komodo || true
   - mv .komodo /root/ || true
   script:
@@ -458,13 +458,14 @@ ubuntu:bionic:
   dependencies:
     - build:linux:centos7
 
+
 ubuntu:cosmic:
   image: ubuntu:cosmic
   variables:
     DOCKER_DRIVER: overlay2
   stage: test
   before_script:
-    - apt update && apt install -y wget libgomp1 python
+    - apt update && apt install -y wget python
     - rm -rf /root/.komodo || true
     - mv .komodo /root/ || true
   script:
@@ -482,6 +483,227 @@ ubuntu:cosmic:
   dependencies:
     - build:linux:centos7
 
+
+ubuntu:disco:
+  image: ubuntu:disco
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: test
+  before_script:
+    - apt update && apt install -y wget python
+    - rm -rf /root/.komodo || true
+    - mv .komodo /root/ || true
+  script:
+    - tar -xzvf ${VERUS_CLI_LINUX}
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  after_script:
+    - mv /root/.komodo ./ || true
+  cache:
+    key: ${CI_JOB_NAME}
+    paths: [.komodo]
+  artifacts:
+    paths: [log.txt]
+    expire_in: 1 week
+  dependencies:
+    - build:linux:centos7
+
+
+debian:jessie:
+  image: debian:jessie
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: test
+  before_script:
+    - apt update && apt install -y wget python
+    - rm -rf /root/.komodo || true
+    - mv .komodo /root/ || true
+  script:
+    - tar -xzvf ${VERUS_CLI_LINUX}
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  after_script:
+    - mv /root/.komodo ./ || true
+  cache:
+    key: ${CI_JOB_NAME}
+    paths: [.komodo]
+  artifacts:
+    paths: [log.txt]
+    expire_in: 1 week
+  dependencies:
+    - build:linux:centos7
+
+debian:stretch:
+  image: debian:stretch
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: test
+  before_script:
+    - apt update && apt install -y wget python
+    - rm -rf /root/.komodo || true
+    - mv .komodo /root/ || true
+  script:
+    - tar -xzvf ${VERUS_CLI_LINUX}
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  after_script:
+    - mv /root/.komodo ./ || true
+  cache:
+    key: ${CI_JOB_NAME}
+    paths: [.komodo]
+  artifacts:
+    paths: [log.txt]
+    expire_in: 1 week
+  dependencies:
+    - build:linux:centos7
+
+
+debian:buster:
+  image: debian:buster
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: test
+  before_script:
+    - apt update && apt install -y wget python
+    - rm -rf /root/.komodo || true
+    - mv .komodo /root/ || true
+  script:
+    - tar -xzvf ${VERUS_CLI_LINUX}
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  after_script:
+    - mv /root/.komodo ./ || true
+  cache:
+    key: ${CI_JOB_NAME}
+    paths: [.komodo]
+  artifacts:
+    paths: [log.txt]
+    expire_in: 1 week
+  dependencies:
+    - build:linux:centos7
+
+
+centos:7:
+  image: centos:7
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: test
+  before_script:
+    - yum update && yum install -y wget python
+    - rm -rf /root/.komodo || true
+    - mv .komodo /root/ || true
+  script:
+    - tar -xzvf ${VERUS_CLI_LINUX}
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  after_script:
+    - mv /root/.komodo ./ || true
+  cache:
+    key: ${CI_JOB_NAME}
+    paths: [.komodo]
+  artifacts:
+    paths: [log.txt]
+    expire_in: 1 week
+  dependencies:
+    - build:linux:centos7
+
+fedora:30:
+  image: fedora:30
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: test
+  before_script:
+    - yum update && yum install -y wget python
+    - rm -rf /root/.komodo || true
+    - mv .komodo /root/ || true
+  script:
+    - tar -xzvf ${VERUS_CLI_LINUX}
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  after_script:
+    - mv /root/.komodo ./ || true
+  cache:
+    key: ${CI_JOB_NAME}
+    paths: [.komodo]
+  artifacts:
+    paths: [log.txt]
+    expire_in: 1 week
+  dependencies:
+    - build:linux:centos7
+
+
+opensuse:tumbleweed:
+  image: opensuse/tumbleweed:latest
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: test
+  before_script:
+    - yum update && yum install -y wget python
+    - rm -rf /root/.komodo || true
+    - mv .komodo /root/ || true
+  script:
+    - tar -xzvf ${VERUS_CLI_LINUX}
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  after_script:
+    - mv /root/.komodo ./ || true
+  cache:
+    key: ${CI_JOB_NAME}
+    paths: [.komodo]
+  artifacts:
+    paths: [log.txt]
+    expire_in: 1 week
+  dependencies:
+    - build:linux:centos7
+
+
+opensuse:leap:
+  image: opensuse/leap:latest
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: test
+  before_script:
+    - yum update && yum install -y wget python
+    - rm -rf /root/.komodo || true
+    - mv .komodo /root/ || true
+  script:
+    - tar -xzvf ${VERUS_CLI_LINUX}
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  after_script:
+    - mv /root/.komodo ./ || true
+  cache:
+    key: ${CI_JOB_NAME}
+    paths: [.komodo]
+  artifacts:
+    paths: [log.txt]
+    expire_in: 1 week
+  dependencies:
+    - build:linux:centos7
+
+fedora:29:
+  image: fedora:29
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: test
+  before_script:
+    - yum update && yum install -y wget python
+    - rm -rf /root/.komodo || true
+    - mv .komodo /root/ || true
+  script:
+    - tar -xzvf ${VERUS_CLI_LINUX}
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  after_script:
+    - mv /root/.komodo ./ || true
+  cache:
+    key: ${CI_JOB_NAME}
+    paths: [.komodo]
+  artifacts:
+    paths: [log.txt]
+    expire_in: 1 week
+  dependencies:
+    - build:linux:centos7
 ########################################################################################################################
 ####END####                               Run Verus CLI on Ubuntu Bionic (18.04)                             ####END####
 ########################################################################################################################
