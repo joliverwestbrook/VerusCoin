@@ -4,7 +4,7 @@ from os import environ, path
 
 daemon_wrapper = "verusd"
 cli_wrapper = "verus"
-daemon_runtime_seconds = 600
+daemon_runtime_seconds = 300
 cli_commands = ["getblockchaininfo", "getmininginfo", "getwalletinfo", "stop"]
 
 
