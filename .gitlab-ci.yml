@@ -305,6 +305,8 @@ linux:fedora-30:
         gcc-c++
         libtool
         patch
+        bzip2
+
   script:
     - zcutil/build.sh -j$(nproc)
     - mkdir verus-cli
@@ -351,6 +353,10 @@ linux:fedora-29:
       gcc-c++
       libtool
       patch
+      bzip2
+      glibc-static
+      libstdc++-static
+
   script:
     - zcutil/build.sh -j$(nproc)
     - mkdir verus-cli
