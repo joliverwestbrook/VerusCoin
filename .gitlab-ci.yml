@@ -288,8 +288,8 @@ linux:fedora-30:
     DOCKER_DRIVER: overlay2
   stage: build
   before_script:
-    - rpm update
-    - rpm -y install
+    - dnf update
+    - dnf -y install
         git
         pkgconfig
         automake
@@ -334,8 +334,8 @@ linux:fedora-29:
     DOCKER_DRIVER: overlay2
   stage: build
   before_script:
-    - rpm update
-    - rpm -y install
+    - dnf update
+    - dnf -y install
       git
       pkgconfig
       automake
