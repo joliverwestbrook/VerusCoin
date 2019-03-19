@@ -288,7 +288,7 @@ linux:fedora-30:
     DOCKER_DRIVER: overlay2
   stage: build
   before_script:
-    - dnf update
+    - dnf -y update
     - dnf -y install
         git
         pkgconfig
@@ -334,7 +334,7 @@ linux:fedora-29:
     DOCKER_DRIVER: overlay2
   stage: build
   before_script:
-    - dnf update
+    - dnf -y update
     - dnf -y install
       git
       pkgconfig
