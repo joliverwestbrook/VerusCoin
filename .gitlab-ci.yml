@@ -290,22 +290,24 @@ linux:fedora-30:
   before_script:
     - dnf -y update
     - dnf -y install
-        git
-        pkgconfig
-        automake
         autoconf
-        ncurses-devel
+        libtool
+        unzip
+        epel-release
+        git
         python
-        python-zmq
+        python34-devel
+        make
         wget
-        curl
-        libcurl-devel
-        gtest-devel
+        curl-devel
+        automake
         gcc
         gcc-c++
-        libtool
         patch
-        bzip2
+        which
+        glibc-static
+        libstdc++-static
+        lbzip2
 
   script:
     - zcutil/build.sh -j$(nproc)
@@ -341,6 +343,7 @@ linux:fedora-29:
       git
       pkgconfig
       automake
+      make
       autoconf
       ncurses-devel
       python
