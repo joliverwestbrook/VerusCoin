@@ -288,7 +288,7 @@ linux:fedora-30:
     DOCKER_DRIVER: overlay2
   stage: build
   before_script:
-    - rpm update -y
+    - rpm update
     - rpm -y install
         git
         pkgconfig
@@ -326,6 +326,54 @@ linux:fedora-30:
   artifacts:
     paths: [log.txt]
     expire_in: 1 week
+
+
+linux:fedora-29:
+  image: fedora:29
+  variables:
+    DOCKER_DRIVER: overlay2
+  stage: build
+  before_script:
+    - rpm update
+    - rpm -y install
+      git
+      pkgconfig
+      automake
+      autoconf
+      ncurses-devel
+      python
+      python-zmq
+      wget
+      curl
+      libcurl-devel
+      gtest-devel
+      gcc
+      gcc-c++
+      libtool
+      patch
+  script:
+    - zcutil/build.sh -j$(nproc)
+    - mkdir verus-cli
+    - cp src/komodod
+      src/komodo-cli
+      src/fiat/verus
+      src/verusd
+      doc/man/verus-cli/linux/README.txt
+      zcutil/fetch-params.sh
+      verus-cli
+    - mv verus-cli/fetch-params.sh verus-cli/fetch-params
+    - chmod +x verus-cli/komodod
+    - chmod +x verus-cli/komodo-cli
+    - chmod +x verus-cli/verus
+    - chmod +x verus-cli/verusd
+    - chmod +x verus-cli/fetch-params
+    - export PATH=$PATH:$CI_PROJECT_DIR/verus-cli
+    - python qa/verus-cli-tests/verus-cli-tester.py
+  artifacts:
+    paths: [log.txt]
+    expire_in: 1 week
+
+
 
 ########################################################################################################################
 ####END####                                              LINUX                                               ####END####
