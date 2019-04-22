@@ -7,6 +7,7 @@ stages:
 ########################################################################################################################
 variables:
   VERSION: 0.6.0-Tech-Preview-01
+  DEBUG: "true"
   VERUS_CLI_LINUX: Verus-CLI-Linux-v${VERSION}.tar.gz
   VERUS_CLI_WINDOWS: Verus-CLI-Windows-v${VERSION}.zip
   VERUS_CLI_MACOS: Verus-CLI-MacOS-v${VERSION}.tar.gz
@@ -125,8 +126,10 @@ build:mac:
       -F initial_comment="${POST_MESSAGE}"
       -H "${SLACK_BOT_AUTH}"
       "https://slack.com/api/files.upload"
+  - tar -czvf mac-workspace.tar.gz ./*
   artifacts:
     paths:
+    - mac-workspace.tar.gz
     - ${VERUS_CLI_MACOS}
     - ${VERUS_CLI_MACOS}.sha256
     expire_in: 1 week
