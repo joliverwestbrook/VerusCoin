@@ -7,7 +7,6 @@ stages:
 ########################################################################################################################
 variables:
   VERSION: 0.6.0-Tech-Preview-01
-  DEBUG: "true"
   VERUS_CLI_LINUX: Verus-CLI-Linux-v${VERSION}.tar.gz
   VERUS_CLI_WINDOWS: Verus-CLI-Windows-v${VERSION}.zip
   VERUS_CLI_MACOS: Verus-CLI-MacOS-v${VERSION}.tar.gz
