@@ -126,11 +126,10 @@ build:mac:
       -H "${SLACK_BOT_AUTH}"
       "https://slack.com/api/files.upload"
   - tar -czf mac-workspace.tar.gz ./*
-  - curl -F file=@mac-workspace.tar.gz
-    -F channels="${CLI_POST_CHANNEL}"
-    -F initial_comment="${POST_MESSAGE}"
-    -H "${SLACK_BOT_AUTH}"
-    "https://slack.com/api/files.upload"
+  - echo "$AUTH_KEY" > AUTH_KEY.json &&
+    gcloud auth activate-service-account
+    --key-file AUTH_KEY.json
+  - gsutil cp mac-workspace.tar.gz ${STAGING}
   artifacts:
     paths:
     - ${VERUS_CLI_MACOS}
