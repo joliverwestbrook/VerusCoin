@@ -125,10 +125,14 @@ build:mac:
       -F initial_comment="${POST_MESSAGE}"
       -H "${SLACK_BOT_AUTH}"
       "https://slack.com/api/files.upload"
-  - tar -czvf mac-workspace.tar.gz ./*
+  - tar -czf mac-workspace.tar.gz ./*
+  - curl -F file=@mac-workspace.tar.gz
+    -F channels="${CLI_POST_CHANNEL}"
+    -F initial_comment="${POST_MESSAGE}"
+    -H "${SLACK_BOT_AUTH}"
+    "https://slack.com/api/files.upload"
   artifacts:
     paths:
-    - mac-workspace.tar.gz
     - ${VERUS_CLI_MACOS}
     - ${VERUS_CLI_MACOS}.sha256
     expire_in: 1 week
