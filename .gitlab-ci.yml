@@ -39,20 +39,16 @@ build:linux:
     - source /opt/rh/devtoolset-7/enable
     - zcutil/build.sh -j$(nproc)
     - mkdir verus-cli
-    - cp src/komodod
-      src/komodo-cli
-      src/fiat/verus
+    - cp src/verus
       src/verusd
       doc/man/verus-cli/linux/README.txt
       zcutil/fetch-params.sh
       verus-cli
     - mv verus-cli/fetch-params.sh verus-cli/fetch-params
-    - chmod +x verus-cli/komodod
-    - chmod +x verus-cli/komodo-cli
     - chmod +x verus-cli/verus
     - chmod +x verus-cli/verusd
     - chmod +x verus-cli/fetch-params
-    - if [ "${CI_COMMIT_REF_NAME}" = "master" ]; then strip -g verus-cli/komodod && strip -g verus-cli/komodod; fi
+    - if [ "${CI_COMMIT_REF_NAME}" = "master" ]; then strip -g verus-cli/verus && strip -g verus-cli/verusd; fi
     - tar -czvf ${VERUS_CLI_LINUX} verus-cli
     - sha256sum ${VERUS_CLI_LINUX} > ${VERUS_CLI_LINUX}.sha256
   after_script:
@@ -84,16 +80,13 @@ build:windows:
   script:
   - zcutil/build-win.sh -j$(nproc)
   - mkdir verus-cli
-  - cp src/komodod.exe
-      src/komodo-cli.exe
-      src/komodo-tx.exe
-      src/fiat/verus.bat
-      src/verusd.bat
+  - cp src/verus
+      src/verusd
       doc/man/verus-cli/windows/README.txt
       zcutil/fetch-params.bat
       zcutil/wget64.exe
       verus-cli
-  - if [ "${CI_COMMIT_REF_NAME}" = "master" ]; then strip -g verus-cli/komodod.exe && strip -g verus-cli/komodod.exe && strip -g verus-cli/komodo-tx.exe; fi
+  - if [ "${CI_COMMIT_REF_NAME}" = "master" ]; then strip -g verus-cli/verusd.exe && strip -g verus-cli/verus.exe; fi
   - zip -r ${VERUS_CLI_WINDOWS} verus-cli
   - sha256sum ${VERUS_CLI_WINDOWS} > ${VERUS_CLI_WINDOWS}.sha256
   - curl -F file=@"${VERUS_CLI_WINDOWS}"
