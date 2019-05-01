@@ -80,8 +80,8 @@ build:windows:
   script:
   - zcutil/build-win.sh -j$(nproc)
   - mkdir verus-cli
-  - cp src/verus
-      src/verusd
+  - cp src/verus.exe
+      src/verusd.exe
       doc/man/verus-cli/windows/README.txt
       zcutil/fetch-params.bat
       zcutil/wget64.exe
