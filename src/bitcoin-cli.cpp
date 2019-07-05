@@ -75,6 +75,54 @@ public:
 #include "komodo_cJSON.c"
 #include "komodo_notary.h"
 
+int32_t uni_get_int(UniValue uv, int32_t def)
+{
+    try
+    {
+        return uv.get_int();
+    }
+    catch(const std::exception& e)
+    {
+        return def;
+    }
+}
+
+int64_t uni_get_int64(UniValue uv, int64_t def)
+{
+    try
+    {
+        return uv.get_int64();
+    }
+    catch(const std::exception& e)
+    {
+        return def;
+    }
+}
+
+std::string uni_get_str(UniValue uv, std::string def)
+{
+    try
+    {
+        return uv.get_str();
+    }
+    catch(const std::exception& e)
+    {
+        return def;
+    }
+}
+
+std::vector<UniValue> uni_getValues(UniValue uv, std::vector<UniValue> def)
+{
+    try
+    {
+        return uv.getValues();
+    }
+    catch(const std::exception& e)
+    {
+        return def;
+    }
+}
+
 void komodo_stateupdate(int32_t height,uint8_t notarypubs[][33],uint8_t numnotaries,uint8_t notaryid,uint256 txhash,uint64_t voutmask,uint8_t numvouts,uint32_t *pvals,uint8_t numpvals,int32_t KMDheight,uint32_t KMDtimestamp,uint64_t opretvalue,uint8_t *opretbuf,uint16_t opretlen,uint16_t vout,uint256 MoM,int32_t MoMdepth)
 {
     
@@ -101,12 +149,11 @@ static int AppInitRPC(int argc, char* argv[])
     ParseParameters(argc, argv);
     komodo_args(argv[0]);
     if (argc<2 || mapArgs.count("-?") || mapArgs.count("-h") || mapArgs.count("-help") || mapArgs.count("-version")) {
-        std::string strUsage = _("Komodo RPC client version") + " " + FormatFullVersion() + "\n" + PrivacyInfo();
-        if (!mapArgs.count("-version")) {
-            strUsage += "\n" + _("Usage:") + "\n" +
-                  "  komodo-cli [options] <command> [params]  " + _("Send command to Komodo") + "\n" +
-                  "  komodo-cli [options] help                " + _("List commands") + "\n" +
-                  "  komodo-cli [options] help <command>      " + _("Get help for a command") + "\n";
+        std::string strUsage = _("Verus RPC client version 0.5.7-2") + " " + "\n" + PrivacyInfo();
+        if (!mapArgs.count("-version")) {      strUsage += "\n" + _("Usage:") + "\n" +
+                  "  verus [options] <command> [params]  " + _("Send command to Komodo") + "\n" +
+                  "  verus [options] help                " + _("List commands") + "\n" +
+                  "  verus [options] help <command>      " + _("Get help for a command") + "\n";
 
             strUsage += "\n" + HelpMessageCli();
         } else {

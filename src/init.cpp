@@ -28,6 +28,7 @@
 #include "miner.h"
 #include "net.h"
 #include "rpc/server.h"
+#include "rpc/pbaasrpc.h"
 #include "rpc/register.h"
 #include "script/standard.h"
 #include "scheduler.h"
@@ -207,6 +208,7 @@ void Shutdown()
     if (pwalletMain)
         pwalletMain->Flush(false);
 #endif
+
 #ifdef ENABLE_MINING
  #ifdef ENABLE_WALLET
     GenerateBitcoins(false, NULL, 0);
@@ -214,6 +216,7 @@ void Shutdown()
     GenerateBitcoins(false, 0);
  #endif
 #endif
+
     StopNode();
     StopTorControl();
     UnregisterNodeSignals(GetNodeSignals());
@@ -365,7 +368,7 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-par=<n>", strprintf(_("Set the number of script verification threads (%u to %d, 0 = auto, <0 = leave that many cores free, default: %d)"),
         -(int)boost::thread::hardware_concurrency(), MAX_SCRIPTCHECK_THREADS, DEFAULT_SCRIPTCHECK_THREADS));
 #ifndef _WIN32
-    strUsage += HelpMessageOpt("-pid=<file>", strprintf(_("Specify pid file (default: %s)"), "komodod.pid"));
+    strUsage += HelpMessageOpt("-pid=<file>", strprintf(_("Specify pid file (default: %s)"), "verusd.pid"));
 #endif
     strUsage += HelpMessageOpt("-prune=<n>", strprintf(_("Reduce storage requirements by pruning (deleting) old blocks. This mode disables wallet support and is incompatible with -txindex. "
             "Warning: Reverting this setting requires re-downloading the entire blockchain. "
@@ -714,7 +717,7 @@ static void ZC_LoadParams(
         uiInterface.ThreadSafeMessageBox(strprintf(
             _("Cannot find the Zcash network parameters in the following directory:\n"
               "%s\n"
-              "Please run 'zcash-fetch-params' or './zcutil/fetch-params.sh' and then restart."),
+              "Please run 'fetch-params' or './zcutil/fetch-params.sh' and then restart."),
                 ZC_GetParamsDir()),
             "", CClientUIInterface::MSG_ERROR);
         StartShutdown();
@@ -781,7 +784,7 @@ bool AppInitServers(boost::thread_group& threadGroup)
  */
 extern int32_t KOMODO_REWIND;
 
-bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
+bool AppInitNetworking()
 {
     // ********************************************************* Step 1: setup
 #ifdef _MSC_VER
@@ -809,7 +812,12 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
 
     if (!SetupNetworking())
         return InitError("Error: Initializing networking failed");
+    
+    return true;
+}
 
+bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
+{
 #ifndef _WIN32
     if (GetBoolArg("-sysperms", false)) {
 #ifdef ENABLE_WALLET
